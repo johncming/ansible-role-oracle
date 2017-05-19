@@ -1,0 +1,22 @@
+galaxy_info:
+  author: johncming
+  description: johncming
+
+  license: BSD
+
+  min_ansible_version: 1.2
+
+  platforms:
+  - name: MacOSX
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+      - trusty
+      - xenial
+
+  galaxy_tags:
+    - oracle
+
+
+dependencies: []

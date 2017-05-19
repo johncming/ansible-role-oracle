@@ -1,0 +1,6 @@
+Name: oci8
+Description: Oracle database engine
+Version: {{ oci8_version }}
+Libs: -L{{ oci8_libdir }} -lclntsh -lnnz11
+Libs.private:
+Cflags: -I{{ oci8_includedir }}

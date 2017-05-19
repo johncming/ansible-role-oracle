@@ -1,0 +1,10 @@
+---
+# defaults file for ansible-role-oracle
+oci8_version: 11.2
+oci8_libdir: /usr/lib/oracle
+oci8_includedir: /usr/include/oracle
+
+oci8_tmp_libdir: /tmp/oci8_libdir
+oci8_tmp_includedir: /tmp/oci8_includedir
+
+pkg_config_path: "{{ ansible_user_dir }}/.ora"

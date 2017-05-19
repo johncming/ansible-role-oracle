@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    go_mode: dev
+  roles:
+    - johncming.go
+    - johncming.emacs
+    - ansible-role-oracle

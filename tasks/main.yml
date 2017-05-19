@@ -1,0 +1,75 @@
+---
+# tasks file for ansible-role-oracle
+- fail:
+    msg: "only provision for Debian"
+  when: ansible_os_family != "Debian"
+
+- lineinfile:
+    path: "{{ ansible_user_dir }}/.bashrc"
+    line: "export PKG_CONFIG_PATH={{ pkg_config_path }}"
+    state: present
+
+- file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0644
+  with_items:
+    - "{{ oci8_libdir }}"
+    - "{{ oci8_includedir }}"
+    - "{{ oci8_tmp_libdir }}"
+    - "{{ oci8_tmp_includedir }}"
+    - "{{ pkg_config_path }}"
+
+- template:
+    src: oci8.pc.j2
+    dest: "{{ pkg_config_path }}/oci8.pc"
+    mode: 0644
+
+- file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0644
+  with_items:
+    - "{{ oci8_libdir }}"
+    - "{{ oci8_includedir }}"
+    - "{{ oci8_tmp_libdir }}"
+    - "{{ oci8_tmp_includedir }}"
+
+- apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - pkg-config
+    - unzip
+    - gcc
+    - libaio1
+  when: ansible_os_family == "Debian"
+
+- unarchive:
+    src: "{{ item.zipfile }}"
+    dest: "{{ item.tmpdir }}"
+  with_items:
+    - zipfile: linux/instantclient-basic-linux.x64-11.2.0.4.0.zip
+      tmpdir: "{{ oci8_tmp_libdir }}"
+    - zipfile: linux/instantclient-sdk-linux.x64-11.2.0.4.0.zip
+      tmpdir: "{{ oci8_tmp_includedir }}"
+
+- command: cp -r "{{ item.src }}" "{{ item.dest }}"
+  with_items:
+    - src: "{{ oci8_tmp_libdir }}/instantclient_11_2/."
+      dest: "{{ oci8_libdir }}"
+    - src: "{{ oci8_tmp_includedir }}/instantclient_11_2/sdk/include/."
+      dest: "{{ oci8_includedir }}"
+
+- file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: hard
+  with_items:
+    - src: "{{ oci8_libdir }}/libclntsh.so.11.1"
+      dest: "{{ oci8_libdir }}/libclntsh.so"
+
+- lineinfile:
+    path: "{{ ansible_user_dir }}/.bashrc"
+    line: "export LD_LIBRARY_PATH={{ oci8_libdir }}"
+    state: present
